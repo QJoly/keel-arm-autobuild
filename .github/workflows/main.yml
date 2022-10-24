@@ -3,7 +3,9 @@ name: image
 on:
   schedule:
     - cron: '0 0 * * *'
-
+  push:
+    branches: [ "main" ]
+    
 env:
   REPO: keel-hq/keel
   IMAGE: reireias/keel-arm
