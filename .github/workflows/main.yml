@@ -48,8 +48,8 @@ jobs:
       - name: checkout keel-hq/keel
         uses: actions/checkout@v2
         with:
-          repository: ${{ env.REPO }}
-          ref: ${{ steps.recent-sha.outputs.sha }}
+          repository: keel-hq/keel
+   #       ref: ${{ steps.recent-sha.outputs.sha }}
           path: /home/runner/work/keel-arm/keel-arm/go/src/github.com/${{ env.REPO }}
         if: "!contains(steps.docker-tag.outputs.tags, steps.recent-tag.outputs.tag)"
 
