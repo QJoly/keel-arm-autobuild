@@ -8,7 +8,7 @@ on:
     
 env:
   REPO: keel-hq/keel
-  IMAGE: reireias/keel-arm
+  IMAGE: qjoly/keel
   GOPATH: /home/runner/work/keel-arm/keel-arm/go
 
 jobs:
@@ -59,7 +59,7 @@ jobs:
           docker login -u qjoly -p ${{ secrets.DOCKERHUB_PASSWORD }}
           cd ${GOPATH}/src/github.com/${{ env.REPO }}
           sed -i -e 's/+= -a/+=/g' Makefile
-          sed -i -e 's#keelhq/keel-arm#reireias/keel-arm#g' Makefile
+          sed -i -e 's#keelhq/keel-arm#qjoly/keel#g' Makefile
           sed -i -e 's/# docker push/docker push/g' Makefile
           make build-arm fetch-certs
           VERSION=${{ steps.recent-tag.outputs.tag }} make armhf
