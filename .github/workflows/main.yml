@@ -51,7 +51,7 @@ jobs:
           repository: keel-hq/keel
    #       ref: ${{ steps.recent-sha.outputs.sha }}
  #         path: /home/runner/work/keel-arm-autobuild/keel-arm-autobuild/go/src/github.com/${{ env.REPO }}
-        if: "!contains(steps.docker-tag.outputs.tags, steps.recent-tag.outputs.tag)"
+#        if: "!contains(steps.docker-tag.outputs.tags, steps.recent-tag.outputs.tag)"
 
 
       - name: Set up QEMU
