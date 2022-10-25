@@ -17,42 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-go@v1
-        with:
-          go-version: 1.13
-
-      - name: install packages
-        run: >
-          sudo apt install -y
-          gcc-arm-linux-gnueabihf
-
-      - name: fetch github recent tag
-        id: recent-tag
-        run: echo "##[set-output name=tag;]$(curl -s https://api.github.com/repos/${REPO}/tags | jq -crM '.[0].name')"
-
-      - name: fetch github recent sha
-        id: recent-sha
-        run: echo "##[set-output name=sha;]$(curl -s https://api.github.com/repos/${REPO}/tags | jq -crM '.[0].commit.sha')"
-
-      - name: fetch docker tag
-        id: docker-tag
-        run: |
-          echo "##[set-output name=tags;]$(curl -s https://registry.hub.docker.com/v2/repositories/${IMAGE}/tags/ | jq -crM '.results[].name' | tr '\n' ',')"
-
-      - name: info
-        run: |
-          echo "tag: ${{ steps.recent-tag.outputs.tag }}"
-          echo "sha: ${{ steps.recent-sha.outputs.sha }}"
-          echo "docker tags: ${{ steps.docker-tag.outputs.tags }}"
-
       - name: checkout keel-hq/keel
         uses: actions/checkout@v2
         with:
           repository: keel-hq/keel
-   #       ref: ${{ steps.recent-sha.outputs.sha }}
- #         path: /home/runner/work/keel-arm-autobuild/keel-arm-autobuild/go/src/github.com/${{ env.REPO }}
-#        if: "!contains(steps.docker-tag.outputs.tags, steps.recent-tag.outputs.tag)"
-
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -79,14 +47,3 @@ jobs:
            tags: qjoly/keel:github
         if: github.event_name != 'pull_request'
         
-      # image build when tag not found in docker hub
-#      - name: image build
-#        run: |
-#          docker login -u qjoly -p ${{ secrets.DOCKERHUB_PASSWORD }}
-#          cd ${GOPATH}/src/github.com/${{ env.REPO }}
-#          sed -i -e 's/+= -a/+=/g' Makefile
-#          sed -i -e 's#keelhq/keel-arm#qjoly/keel#g' Makefile
-#          sed -i -e 's/# docker push/docker push/g' Makefile
-#          make build-arm fetch-certs
-#          VERSION=${{ steps.recent-tag.outputs.tag }} make armhf
-#        if: "!contains(steps.docker-tag.outputs.tags, steps.recent-tag.outputs.tag)"
