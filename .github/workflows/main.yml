@@ -53,14 +53,40 @@ jobs:
           path: /home/runner/work/keel-arm-autobuild/keel-arm-autobuild/go/src/github.com/${{ env.REPO }}
         if: "!contains(steps.docker-tag.outputs.tags, steps.recent-tag.outputs.tag)"
 
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: arm64,arm
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+       
+      - name: Login to personal registry
+        uses: docker/login-action@v2 
+        with:
+          username: qjoly
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        if: github.event_name != 'pull_request'
+        
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+           context: .
+           platforms: linux/amd64,linux/arm64
+           push: true
+           tags: qjoly/keel:github
+        if: github.event_name != 'pull_request'
+        
       # image build when tag not found in docker hub
-      - name: image build
-        run: |
-          docker login -u qjoly -p ${{ secrets.DOCKERHUB_PASSWORD }}
-          cd ${GOPATH}/src/github.com/${{ env.REPO }}
-          sed -i -e 's/+= -a/+=/g' Makefile
-          sed -i -e 's#keelhq/keel-arm#qjoly/keel#g' Makefile
-          sed -i -e 's/# docker push/docker push/g' Makefile
-          make build-arm fetch-certs
-          VERSION=${{ steps.recent-tag.outputs.tag }} make armhf
-        if: "!contains(steps.docker-tag.outputs.tags, steps.recent-tag.outputs.tag)"
+#      - name: image build
+#        run: |
+#          docker login -u qjoly -p ${{ secrets.DOCKERHUB_PASSWORD }}
+#          cd ${GOPATH}/src/github.com/${{ env.REPO }}
+#          sed -i -e 's/+= -a/+=/g' Makefile
+#          sed -i -e 's#keelhq/keel-arm#qjoly/keel#g' Makefile
+#          sed -i -e 's/# docker push/docker push/g' Makefile
+#          make build-arm fetch-certs
+#          VERSION=${{ steps.recent-tag.outputs.tag }} make armhf
+#        if: "!contains(steps.docker-tag.outputs.tags, steps.recent-tag.outputs.tag)"
