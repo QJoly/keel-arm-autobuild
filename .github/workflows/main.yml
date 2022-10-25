@@ -45,9 +45,7 @@ jobs:
           username: qjoly
           password: ${{ secrets.DOCKERHUB_PASSWORD }}     
       
-      - name: test
-        run: wget http://registry.npm.taobao.org/ant-design-vue/download/ant-design-vue-1.3.8.tgz
-          
+         
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
