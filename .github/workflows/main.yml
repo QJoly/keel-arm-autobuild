@@ -24,7 +24,12 @@ jobs:
           
       - name: checkout keel-hq/keel
         uses: actions/checkout@v2
-          
+        with: 
+          path: /tmp/main
+        
+      - name: Copy dockerfile
+        run: cp /tmp/main/Dockerfile . 
+        
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
         with:
